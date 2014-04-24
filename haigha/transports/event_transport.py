@@ -46,8 +46,8 @@ class EventTransport(Transport):
     ###
     def connect(self, (host, port)):
         '''
-        Connect assuming a host and port tuple. Implemented as non-blocking, and
-        will close the transport if there's an error
+        Connect assuming a host and port tuple. Implemented as non-blocking,
+        and will close the transport if there's an error
         '''
         self._host = "%s:%s" % (host, port)
         self._sock = EventSocket(
@@ -67,24 +67,24 @@ class EventTransport(Transport):
 
     def read(self, timeout=None):
         '''
-        Read from the transport. If no data is available, should return None. The
-        timeout is ignored as this returns only data that has already been buffered
-        locally.
+        Read from the transport. If no data is available, should return None.
+        The timeout is ignored as this returns only data that has already
+        been buffered locally.
         '''
         # NOTE: copying over this comment from Connection, because there is
         # knowledge captured here, even if the details are stale
-        # Because of the timer callback to dataRead when we re-buffered, there's a
-        # chance that in between we've lost the socket.  If that's the case, just
-        # silently return as some code elsewhere would have already notified us.
-        # That bug could be fixed by improving the message reading so that we consume
-        # all possible messages and ensure that only a partial message was rebuffered,
-        # so that we can rely on the next read event to read the subsequent
-        # message.
+        # Because of the timer callback to dataRead when we re-buffered,
+        # there's a chance that in between we've lost the socket. If that's
+        # the case, just silently return as some code elsewhere would have
+        # already notified us. That bug could be fixed by improving the
+        # message reading so that we consume all possible messages and ensure
+        # that only a partial message was rebuffered, so that we can rely on
+        # the next read event to read the subsequent message.
         if not hasattr(self, '_sock'):
             return None
 
-        # This is sort of a hack because we're faking that data is ready, but it
-        # works for purposes of supporting timeouts
+        # This is sort of a hack because we're faking that data is ready, but
+        # it works for purposes of supporting timeouts
         if timeout:
             if self._heartbeat_timeout:
                 self._heartbeat_timeout.delete()
