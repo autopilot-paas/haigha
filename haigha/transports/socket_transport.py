@@ -120,12 +120,13 @@ class SocketTransport(Transport):
                     'sent %d bytes to %s' % (len(data), self._host))
 
             return
-        except EnvironmentError as e:
-            # sockets raise this type of error, and since if sendall() fails we're
-            # left in an indeterminate state, assume that any error we catch means
-            # that the connection is dead. Note that this assumption requires this
-            # to be a blocking socket; if we ever support non-blocking in this class
-            # then this whole method has to change a lot.
+        except EnvironmentError:
+            # sockets raise this type of error, and since if sendall() fails
+            # we're left in an indeterminate state, assume that any error we
+            # catch means that the connection is dead. Note that this
+            # assumption requires this to be a blocking socket; if we ever
+            # support non-blocking in this class then this whole method has
+            # to change a lot.
             self.connection.logger.exception(
                 'error writing to %s' % (self._host))
 
