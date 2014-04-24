@@ -62,15 +62,15 @@ class MethodFrame(Frame):
         stream_args_len_pos = len(buf)
         writer.write_long(0)
 
-        # Mark the point in the stream where we start writing arguments, *including*
-        # the class and method ids.
+        # Mark the point in the stream where we start writing arguments,
+        # *including* the class and method ids.
         stream_method_pos = len(buf)
 
         writer.write_short(self.class_id)
         writer.write_short(self.method_id)
 
         # This is assuming that args is a Writer
-        if self._args != None:
+        if self._args is not None:
             writer.write(self._args.buffer())
 
         # Write the total length back at the position we allocated
