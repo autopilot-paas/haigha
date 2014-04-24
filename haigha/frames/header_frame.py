@@ -4,7 +4,6 @@ Copyright (c) 2011-2014, Agora Games, LLC All rights reserved.
 https://github.com/agoragames/haigha/blob/master/LICENSE.txt
 '''
 
-import struct
 from collections import deque
 
 from haigha.writer import Writer
@@ -78,16 +77,17 @@ class HeaderFrame(Frame):
         size = payload.read_longlong()
         properties = {}
 
-        # The AMQP spec is overly-complex when it comes to handling header frames.
-        # The spec says that in addition to the first 16bit field, additional ones
-        # can follow which /may/ then be in the property list (because bit flags
-        # aren't in the list).  Properly implementing custom values requires the
-        # ability change the properties and their types, which someone is welcome
-        # to do, but seriously, what's the point? Because the complexity of parsing
-        # and writing this frame directly impacts the speed at which messages can
-        # be processed, there are two branches for both a fast parse which assumes
-        # no changes to the properties and a slow parse. For now it's up to someone
-        # using custom headers to flip the flag.
+        # The AMQP spec is overly-complex when it comes to handling header
+        # frames. The spec says that in addition to the first 16bit field,
+        # additional ones can follow which /may/ then be in the property list
+        # (because bit flags aren't in the list). Properly implementing custom
+        # values requires the ability change the properties and their types,
+        # which someone is welcome to do, but seriously, what's the point?
+        # Because the complexity of parsing and writing this frame directly
+        # impacts the speed at which messages can be processed, there are two
+        # branches for both a fast parse which assumes no changes to the
+        # properties and a slow parse. For now it's up to someone using custom
+        # headers to flip the flag.
         if self.DEFAULT_PROPERTIES:
             flag_bits = payload.read_short()
             for key, proptype, rfunc, wfunc, mask in self.PROPERTIES:
@@ -122,7 +122,9 @@ class HeaderFrame(Frame):
         self._properties = properties
 
     def __str__(self):
-        return "%s[channel: %d, class_id: %d, weight: %d, size: %d, properties: %s]" % (self.__class__.__name__, self.channel_id, self._class_id, self._weight, self._size, self._properties)
+        return "%s[channel: %d, class_id: %d, weight: %d, size: %d, properties: %s]" % (
+            self.__class__.__name__, self.channel_id, self._class_id,
+            self._weight, self._size, self._properties)
 
     def write_frame(self, buf):
         '''
