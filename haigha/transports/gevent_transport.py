@@ -6,7 +6,6 @@ https://github.com/agoragames/haigha/blob/master/LICENSE.txt
 
 from haigha.transports.socket_transport import SocketTransport
 
-import errno
 try:
     import gevent
     from gevent.event import Event
@@ -54,19 +53,19 @@ class GeventTransport(SocketTransport):
 
     def read(self, timeout=None):
         '''
-        Read from the transport. If no data is available, should return None. If
-        timeout>0, will only block for `timeout` seconds.
+        Read from the transport. If no data is available, should return None.
+        If timeout>0, will only block for `timeout` seconds.
         '''
-        # If currently locked, another greenlet is trying to read, so yield control
-        # and then return none. Required if a Connection is configured to be
-        # synchronous, a sync callback is trying to read, and there's another read
-        # loop running read_frames. Without it, the run loop will release the lock
-        # but then immediately acquire it again. Yielding control in the reading
-        # thread after bytes are read won't fix anything, because it's quite
-        # possible the bytes read resulted in a frame that satisfied the
-        # synchronous callback, and so this needs to return immediately to first
-        # check the current status of synchronous callbacks before attempting to
-        # read again.
+        # If currently locked, another greenlet is trying to read, so yield
+        # control and then return none. Required if a Connection is configured
+        # to be synchronous, a sync callback is trying to read, and there's
+        # another read loop running read_frames. Without it, the run loop will
+        # release the lock but then immediately acquire it again. Yielding
+        # control in the reading thread after bytes are read won't fix
+        # anything, because it's quite possible the bytes read resulted in a
+        # frame that satisfied the synchronous callback, and so this needs to
+        # return immediately to first check the current status of synchronous
+        # callbacks before attempting to read again.
         if self._read_lock.locked():
             self._read_wait.wait(timeout)
             return None
@@ -93,10 +92,10 @@ class GeventTransport(SocketTransport):
         '''
         Write some bytes to the transport.
         '''
-        # MUST use a lock here else gevent could raise an exception if 2 greenlets
-        # try to write at the same time. I was hoping that sendall() would do that
-        # blocking for me, but I guess not. May require an eventsocket-like buffer
-        # to speed up under high load.
+        # MUST use a lock here else gevent could raise an exception if 2
+        # greenlets try to write at the same time. I was hoping that
+        # sendall() would do that blocking for me, but I guess not. May
+        # require an eventsocket-like buffer to speed up under high load.
         self._write_lock.acquire()
         try:
             return super(GeventTransport, self).write(data)
