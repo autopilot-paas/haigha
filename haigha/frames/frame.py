@@ -48,16 +48,17 @@ class Frame(object):
     @classmethod
     def read_frames(cls, reader):
         '''
-        Read one or more frames from an IO stream.  Buffer must support file object
-        interface.
+        Read one or more frames from an IO stream.  Buffer must support file
+        object interface.
 
-        After reading, caller will need to check if there are bytes remaining in the
-        stream.  If there are, then that implies that there is one or more incomplete
-        frames and more data needs to be read.  The position of the cursor in the
-        frame stream will mark the point at which the last good frame was read.  If
-        the caller is expecting a sequence of frames and only received a part of that
-        sequence, they are responsible for buffering those frames until the rest of
-        the frames in the sequence have arrived.
+        After reading, caller will need to check if there are bytes remaining
+        in the stream. If there are, then that implies that there is one or
+        more incomplete frames and more data needs to be read.  The position
+        of the cursor in the frame stream will mark the point at which the
+        last good frame was read. If the caller is expecting a sequence of
+        frames and only received a part of that sequence, they are responsible
+        for buffering those frames until the rest of the frames in the sequence
+        have arrived.
         '''
         rval = deque()
 
@@ -85,8 +86,8 @@ class Frame(object):
     @classmethod
     def _read_frame(cls, reader):
         '''
-        Read a single frame from a Reader.  Will return None if there is an incomplete
-        frame in the stream.
+        Read a single frame from a Reader.  Will return None if there is an
+        incomplete frame in the stream.
 
         Raise MissingFooter if there's a problem reading the footer byte.
         '''
@@ -117,8 +118,8 @@ class Frame(object):
     @classmethod
     def parse(cls, channel_id, payload):
         '''
-        Subclasses need to implement parsing of their frames.  Should return a new
-        instance of their type.
+        Subclasses need to implement parsing of their frames.  Should return
+        a new instance of their type.
         '''
         raise NotImplementedError()
 
@@ -130,8 +131,8 @@ class Frame(object):
         return "%s[channel: %d]" % (self.__class__.__name__, self.channel_id)
 
     def __repr__(self):
-        # Have to actually call the method rather than __repr__==__str__ because
-        # subclasses overload __str__
+        # Have to actually call the method rather than __repr__==__str__
+        # because subclasses overload __str__
         return str(self)
 
     def write_frame(self, stream):
