@@ -41,9 +41,9 @@ class Transport(object):
 
     def read(self, timeout=None):
         '''
-        Read from the transport. If no data is available, should return None. The
-        return value can be any data type that is supported by the haigha.Reader
-        class.
+        Read from the transport. If no data is available, should return None.
+        The return value can be any data type that is supported by the
+        haigha.Reader class.
 
         Caller passes in an optional timeout. Each transport determines how to
         implement this.
