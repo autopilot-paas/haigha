@@ -4,7 +4,7 @@ Copyright (c) 2011-2014, Agora Games, LLC All rights reserved.
 https://github.com/agoragames/haigha/blob/master/LICENSE.txt
 '''
 
-from struct import Struct, pack
+from struct import Struct
 from calendar import timegm
 from datetime import datetime
 from decimal import Decimal
@@ -26,7 +26,8 @@ class Writer(object):
             self._output_buffer = bytearray()
 
     def __str__(self):
-        return ''.join(['\\x%s' % (chr(c).encode('hex')) for c in self._output_buffer])
+        return ''.join([
+            '\\x%s' % (chr(c).encode('hex')) for c in self._output_buffer])
 
     __repr__ = __str__
 
@@ -51,8 +52,8 @@ class Writer(object):
     def write_bits(self, *args):
         '''
         Write multiple bits in a single byte field. The bits will be written in
-        little-endian order, but should be supplied in big endian order. Will raise
-        ValueError when more than 8 arguments are supplied.
+        little-endian order, but should be supplied in big endian order. Will
+        raise ValueError when more than 8 arguments are supplied.
 
         write_bits(True, False) => 0x02
         '''
@@ -166,7 +167,7 @@ class Writer(object):
         self._output_buffer.extend(pack(long(timegm(t.timetuple()))))
         return self
 
-    # NOTE: coding this to http://dev.rabbitmq.com/wiki/Amqp091Errata#section_3 and
+    # NOTE: coding to http://dev.rabbitmq.com/wiki/Amqp091Errata#section_3 and
     # NOT spec 0.9.1. It seems that Rabbit and other brokers disagree on this
     # section for now.
     def write_table(self, d):
@@ -175,11 +176,11 @@ class Writer(object):
         that are strings, signed integers, Decimal, datetime.datetime, or
         sub-dictionaries following the same constraints.
         """
-        # HACK: encoding of AMQP tables is broken because it requires the length of
-        # the /encoded/ data instead of the number of items.  To support streaming,
-        # fiddle with cursor position, rewinding to write the real length of the
-        # data.  Generally speaking, I'm not a fan of the AMQP encoding scheme, it
-        # could be much faster.
+        # HACK: encoding of AMQP tables is broken because it requires the
+        # length of the /encoded/ data instead of the number of items. To
+        # support streaming, fiddle with cursor position, rewinding to write
+        # the real length of the data. Generally speaking, I'm not a fan of
+        # the AMQP encoding scheme, it could be much faster.
         table_len_pos = len(self._output_buffer)
         self.write_long(0)
         table_data_pos = len(self._output_buffer)
@@ -232,7 +233,8 @@ class Writer(object):
 
     # Coding to http://dev.rabbitmq.com/wiki/Amqp091Errata#section_3 which
     # differs from spec in that the value is signed.
-    def _field_decimal(self, val, exp_pack=Struct('B').pack, dig_pack=Struct('>i').pack):
+    def _field_decimal(self, val, exp_pack=Struct('B').pack,
+                       dig_pack=Struct('>i').pack):
         self._output_buffer.append('D')
         sign, digits, exponent = val.as_tuple()
         v = 0
